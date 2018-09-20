@@ -69,7 +69,7 @@ For example:
 >>> get_ngrams(["natural","language","processing"],1)
 [('START',), ('natural',), ('language',), ('processing',), ('STOP',)]
 >>> get_ngrams(["natural","language","processing"],2)
-('START', 'natural'), ('natural', 'language'), ('language', 'processing'), ('processing', 'STOP')]
+[('START', 'natural'), ('natural', 'language'), ('language', 'processing'), ('processing', 'STOP')]
 >>> get_ngrams(["natural","language","processing"],3)
 [('START', 'START', 'natural'), ('START', 'natural', 'language'), ('natural', 'language', 'processing'), ('language', 'processing', 'STOP')]
 ```

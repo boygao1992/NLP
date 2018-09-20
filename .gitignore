@@ -2,3 +2,5 @@
 *.log
 *.aux
 auto/
+hw1_data/
+.ipynb_checkpoints/
