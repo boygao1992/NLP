@@ -1,0 +1,203 @@
+\documentclass[twoside,11pt]{homework}
+
+\coursename{COMS W4705: Natural Language Processing (Fall 2018)} 
+
+\studname{Wenbo Gao}    % YOUR NAME GOES HERE
+\studmail{wg2313@columbia.edu}% YOUR UNI GOES HERE
+\hwNo{1}                   % THE HOMEWORK NUMBER GOES HERE
+\date{\today} % DATE GOES HERE
+
+% Uncomment the next line if you want to use \includegraphics.
+\usepackage{graphicx}
+%\includegraphics[height=0.3\textheight]{hw0.pdf}
+\usepackage{physics}
+% \usepackage{tikz-cd}
+
+% environments: theorem[*rename], proof[*rename], 
+
+\begin{document}
+\maketitle
+
+\section*{Problem 1}
+
+Consider the following training corpus of emails with the class labels
+\textbf{ham} and \textbf{spam}. The content of each email has already been
+processed and is provided as a bag of words.\\
+Email1 (spam): buy car Nigeria profit\\
+Email2 (ham): money profit home bank\\
+Email3 (spam): Nigeria bank check wire\\
+Email4 (ham): money bank car\\
+Email5 (ham): home Nigeria fly
+
+\subsection*{(a)}
+
+\begin{prob}
+  Based on this data, estimate the prior probability for a random email to be
+  spam or ham if we don't know anything about its content, i.e. $P(Class)$?
+\end{prob}
+
+\begin{solution}
+  A random variable $Class$ has two possible outcomes, $ham$ and $spam$.\\
+  In this dataset, we have $\{ spam, ham, spam, ham, ham \}$.
+  Thus,
+  \[
+    \begin{aligned}
+      P[Class = ham] = \frac{3}{5}\\
+      P[Class = spam] = \frac{2}{5}
+    \end{aligned}
+  \]
+\end{solution}
+
+\subsection*{(b)}
+
+\begin{prob}
+  Based on this data, estimate the conditional probability distributions for
+  each word given the class, i.e. $P(Word | Class)$.
+  You can write down these distribution in a table.
+\end{prob}
+
+\begin{solution}
+  $Word \in \{ bank, buy, car, check, fly, home, money, Nigeria, profit, wire \}$\\
+  \begin{tabular}[h]{| r | c | c | c | c | c | c | c | c | c | c |}
+    \hline
+    &&&&&&&&&&\\
+    \textbf{Word} & bank & buy & car & check & fly & home & money & Nigeria & profit & wire \\
+    &&&&&&&&&&\\
+    \hline
+    &&&&&&&&&&\\
+    \textbf{$P[Word \vert Class = ham]$} & $\frac{2}{3}$ & 0 & $\frac{1}{3}$ & 0 & $\frac{1}{3}$ & $\frac{2}{3}$ & $\frac{2}{3}$ & $\frac{1}{3}$ & $\frac{1}{3}$ & 0\\
+    &&&&&&&&&&\\
+    \hline
+    &&&&&&&&&&\\
+    \textbf{$P[Word | Class = spam]$} & $\frac{1}{2}$ & $\frac{1}{2}$ & $\frac{1}{2}$ & $\frac{1}{2}$ & 0 & 0 & 0 & 1 & $\frac{1}{2}$ & $\frac{1}{2}$\\ 
+    &&&&&&&&&&\\
+    \hline
+  \end{tabular}
+\end{solution}
+
+\subsection*{(c)}
+
+\begin{prob}
+  Using the Naive Bayes' approach and your probability estimates, what is the
+  predicted class label for each of the following emails? Show your calculation.  
+\end{prob}
+
+\begin{solution}
+$ $
+  \begin{itemize}
+  \item Nigeria
+  \[
+    \begin{aligned}
+      & P[Class = ham | Sentence = \text{Nigeria}] \cdot P[Sentence = \text{Nigeria}] \\
+      &= P[Sentence = \text{Nigeria} | Class = ham] \cdot P[Class = ham] \\
+      &= P[Word = Nigeria | Class = ham] \cdot P[Class = ham] \\
+      &= \frac{1}{3} \cdot \frac{3}{5} = \frac{1}{5}
+    \end{aligned}
+  \]
+  \[
+    \begin{aligned}
+      & P[Class = spam | Sentence = \text{Nigeria}] \cdot P[Sentence = \text{Nigeria}] \\
+      &= P[ Sentense = \text{Nigeria} | Class = spam] \cdot P[Class = spam] \\
+      &= P[ Word = Nigeria | Class = spam] \cdot P[Class = spam] \\
+      &= 1 \cdot \frac{2}{5} = \frac{2}{5}
+    \end{aligned}
+  \]
+  Thus, "Nigeria" is more likely to be $spam$.
+
+  \item Nigeria home
+  \[
+    \begin{aligned}
+      & P[Class = ham | Sentence = \text{Nigeria home}] \cdot P[Sentence = \text{Nigeria home}] \\
+      &= P[Sentence = \text{Nigeria home} | Class = ham] \cdot P[Class = ham] \\
+      &= P[Word = Nigeria | Class = ham] \cdot P[Word = home | Class = ham] \cdot P[Class = ham] \\
+      &= \frac{1}{3} \cdot \frac{2}{3} \cdot \frac{3}{5} = \frac{2}{15}
+    \end{aligned}
+  \]
+  \[
+    \begin{aligned}
+      & P[Class = spam | Sentence = \text{Nigeria home}] \cdot P[Sentence = \text{Nigeria home}] \\
+      &= P[Sentence = \text{Nigeria home} | Class = spam] \cdot P[Class = spam] \\
+      &= P[Word = Nigeria | Class = spam] \cdot P[Word = home | Class = spam] \cdot P[Class = spam] \\
+      &= 1 \cdot 0 \cdot \frac{2}{5} = 0
+    \end{aligned}
+  \]
+  Thus, "Nigeria home" is more likely to be $ham$.
+
+  \item home bank money
+  \[
+    \begin{aligned}
+      & P[Class = ham | Sentence = \text{home bank money}] \cdot P[Sentence =
+      \text{home bank money}] \\
+      &= P[Sentence = \text{home bank money} | Class = ham] \cdot P[Class = ham] \\
+      &= P[Word = home | Class = ham] \cdot P[Word = bank | Class = ham]\\
+      & \cdot P[Word = money | Class = ham] \cdot P[Class = ham] \\
+      &= \frac{2}{3} \cdot \frac{2}{3} \cdot \frac{2}{3} \cdot \frac{3}{5} = \frac{8}{45}
+    \end{aligned}
+  \]
+  \[
+    \begin{aligned}
+      & P[Class = spam | Sentence = \text{home bank money}] \cdot P[Sentence =
+      \text{home bank money}] \\
+      &= P[Sentence = \text{home bank money} | Class = spam] \cdot P[Class = spam] \\
+      &= P[Word = home | Class = spam] \cdot P[Word = bank | Class = spam]\\
+      & \cdot P[Word = money | Class = spam] \cdot P[Class = spam] \\
+      &= 0 \cdot \frac{1}{2} \cdot 0 \cdot \frac{2}{5} = 0
+    \end{aligned}
+  \]
+  Thus, "home bank money" is more likely to be $ham$.
+  \end{itemize}
+\end{solution}
+
+\section*{Problem 2}
+
+Show that, if you sum up the probabilities of all sentences of length $n$ under
+a bigram language model, this sum is exactly 1 (i.e. the model defines a proper
+probability distribution). Assume a vocabulary size of $V$.
+\[
+  \sum_{w_1, w_2, \dots, w_n} P(w_1, w_2, \dots, w_n) = \sum_{w_1, w_2, \dots, w_n}
+  P(w_1 | \text{start}) \cdot P(w_2 | w_1) \cdots P(w_n | w_{n-1}) = 1
+\]
+Hint: Use induction over the sentence length.
+Comment: This property actually holds for any $n$-gram model, but you only have to
+show it for bigrams.
+
+\begin{proof}[proof by induction]
+$ $
+  \begin{itemize}
+  \item Base case:
+    \[
+      \sum_{w_1} P(w_1) = \sum_{w_1} P(w_1 | \text{start}) = 1
+    \]
+    is true.
+  \item Induction step (from $n = k$ to $n = k+1$):\\
+    Assume for $n = k$,
+    \[
+      \sum_{w_1, w_2, \dots, w_k} P(w_1, w_2, \dots, w_k) = \sum_{w_1, w_2, \dots, w_k}
+      P(w_1 | \text{start}) \cdot P(w_2 | w_1) \cdots P(w_k | w_{k-1}) = 1
+    \]
+    is true.\\
+    For $n = k + 1$,
+    \[
+      \begin{aligned}
+        & \sum_{w_1, w_2, \dots, w_{k+1}} P(w_1, w_2, \dots, w_{k+1})\\
+        &= \sum_{w_1, w_2, \dots, w_{k+1}}
+        P(w_1 | \text{start}) \cdot P(w_2 | w_1) \cdots P(w_{k+1} | w_k) \\
+        &= \sum_{w_1, w_2, \dots, w_k}
+        (P(w_1 | \text{start}) \cdot P(w_2 | w_1) \cdots P(w_k | w_{k-1})
+        \cdot \underbrace{\sum_{w_{k+1}} P(w_{k+1}| w_k)}_{= 1})\\
+        &= \sum_{w_1, w_2, \dots, w_k}
+        P(w_1 | \text{start}) \cdot P(w_2 | w_1) \cdots P(w_k | w_{k-1})\\
+        &= 1
+      \end{aligned}
+    \]
+    is also true.
+  \end{itemize}
+  Therefore,
+  \[
+    \sum_{w_1, w_2, \dots, w_n} P(w_1, w_2, \dots, w_n) = \sum_{w_1, w_2, \dots, w_n}
+    P(w_1 | \text{start}) \cdot P(w_2 | w_1) \cdots P(w_n | w_{n-1}) = 1
+  \]
+  is true.
+\end{proof}
+
+\end{document} 
