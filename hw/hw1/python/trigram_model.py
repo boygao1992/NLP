@@ -30,37 +30,34 @@ def get_lexicon(corpus):
             word_counts[word] += 1
     return set(word for word in word_counts if word_counts[word] > 1)
 
-def get_ngrams(sequence, n):
-    """
-    COMPLETE THIS FUNCTION (PART 1)
-    Given a sequence, this function should return a list of n-grams, where each n-gram is a Python tuple.
-    This should work for arbitrary values of 1 <= n < len(sequence).
-    """
+# Utils
+def trim_tuple_head(t, n):
+    # assert isinstance(t, tuple)
+    # assert isinstance(n, int)
 
+    if (len(t) > n):
+        return t[(len(t) - n):]
+    else:
+        return t
+# Utils
+def fill_with_starts_at_beginning(t,n):
+    # assert isinstance(t, tuple)
+
+    return (("START",)*(n-len(t))) + t
+
+def get_ngrams(sequence, n):
     # assert isinstance(sequence, list)
     # assert isinstance(n, int) and n >= 1
 
-    result = []
-    length = len(sequence)
-    if n > 1:
-        for i in range(length):
-            if i > 0:
-                result.append(result[i-1][-(n-1):] + (sequence[i],))
-            else:
-                result.append((sequence[0],))
-        for i in range(length):
-            result[i] = (("START",)*(n - i - 1) + result[i])
-        result.append(result[length-1][-(n-1):] + ("STOP",))
+    wrapped_in_tuples = map(lambda x: (x,), sequence)
+    duplicated = accumulate(wrapped_in_tuples, lambda tuple1, tuple2: tuple1 + tuple2)
+    filled_with_starts = map(lambda t: fill_with_starts_at_beginning(t,n), duplicated)
+    trimed = list(map(lambda t: trim_tuple_head(t,n), filled_with_starts))
+    stop_tuple = trim_tuple_head(trimed[-1] + ("STOP",), n)
+    if (n > 1):
+        return trimed + [stop_tuple]
     else:
-        for word in sequence:
-            result.append((word,))
-        result.append(("STOP",))
-
-    if n == 1:
-        result = [("START",)] + result
-
-    return result
-
+        return [("START",)] + trimed + [stop_tuple]
 
 class TrigramModel(object):
 
@@ -95,9 +92,7 @@ class TrigramModel(object):
         trigrams = []
         for sentence in corpus:
             unigrams += get_ngrams(sentence, 1)
-
             bigrams += get_ngrams(sentence, 2)
-
             trigrams += get_ngrams(sentence, 3)
 
         self.unigramcounts = Counter(unigrams)
@@ -193,21 +188,28 @@ class TrigramModel(object):
 
 def essay_scoring_experiment(training_file1, training_file2, testdir1, testdir2):
 
-        model1 = TrigramModel(training_file1)
-        model2 = TrigramModel(training_file2)
+        model1 = TrigramModel(training_file1) # high
+        model2 = TrigramModel(training_file2) # low
 
         total = 0
         correct = 0
 
-        for f in os.listdir(testdir1):
-            pp = model1.perplexity(corpus_reader(os.path.join(testdir1, f), model1.lexicon))
-            # ..
+        for f in os.listdir(testdir1): # high
+            total += 1
 
-        for f in os.listdir(testdir2):
-            pp = model2.perplexity(corpus_reader(os.path.join(testdir2, f), model2.lexicon))
-            # ..
+            p1 = model1.perplexity(corpus_reader(os.path.join(testdir1, f), model1.lexicon))
+            p2 = model2.perplexity(corpus_reader(os.path.join(testdir1, f), model2.lexicon))
+            if p1 < p2:
+                correct += 1
 
-        return 0.0
+        for f in os.listdir(testdir2): # low
+            total += 1
+            p1 = model1.perplexity(corpus_reader(os.path.join(testdir2, f), model1.lexicon))
+            p2 = model2.perplexity(corpus_reader(os.path.join(testdir2, f), model2.lexicon))
+            if p1 > p2:
+                correct += 1
+
+        return correct / total
 
 if __name__ == "__main__":
 
@@ -229,5 +231,11 @@ if __name__ == "__main__":
 
 
     # Essay scoring experiment:
-    # acc = essay_scoring_experiment('train_high.txt', 'train_low.txt", "test_high", "test_low")
-    # print(acc)
+    dir = "./hw1_data/ets_toefl_data/"
+    train_high = dir + "train_high.txt"
+    train_low = dir + "train_low.txt"
+    test_high = dir + "test_high/"
+    test_low = dir + "test_low/"
+    acc = essay_scoring_experiment(train_high, train_low, test_high, test_low)
+
+    print(acc)
