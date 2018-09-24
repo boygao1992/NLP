@@ -37,3 +37,11 @@ similarity
 
 difficulty
 - the data set will be extremely small which means low noise tolerance thus the size of the hypothesis space has to be strictly restricted
+
+# Reference
+
+## Factorial Hidden Markov Model
+
+### 1.[Factorial Hidden Markov Models - Columbia EE](http://www.ee.columbia.edu/~sfchang/course/svia-F03/papers/factorial-HMM-97.pdf)
+
+### 2.[Supertagging with Factorial Hidden Markov Models](http://www.aclweb.org/anthology/Y09-2043)
