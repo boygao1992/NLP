@@ -38,6 +38,62 @@ similarity
 difficulty
 - the data set will be extremely small which means low noise tolerance thus the size of the hypothesis space has to be strictly restricted
 
+## State Formulation
+
+- deterministic: `State -> State`
+- probabilistic: `State -> { State0: 0.7 , State1: 0.2, ... }`
+
+```
+current_State (of the entire universe) -> next_State (of the entire universe)
+
+-- event-driven formulation models the interaction between two systems:
+-- System1 (internal), System2 (external, or the rest of the world)
+
+current_System1_State x current_System2_State -> next_System1_State x next_System2_State
+
+-- model the communication process between two systems
+-- basic case: full state synchronization
+-- each system has its own state directly accessible
+-- but need explicit synchronization step to get the other system's newest state
+-- old_System2_State is System1's latest understanding of the state of System2 before the next synchronization step
+-- similar for old_System1_State
+(current_System1_State x old_System2_State) x (old_System1_State x current_System2_State)
+->
+(next_System1_State x current_System2_State) x (current_System1_State, next_System2_State)
+
+-- model the alternating communication process
+1. (current_System1_State x old_System2_State) x current_System2_State
+-> (next_System1_State x current_System2_State) x next_System1_State
+2. (old_System1_State x current_System2_State) x next_System1_State
+-> (new_System1_State x next_System2_State) x next_System2_State
+3. loop
+
+-- full state sychronization is not practical
+-- in reality, both systems only get to observe partial information about the other system's state
+-- thus, need a decoding step to reconstruct the full state
+-- the encoding step is mandatory in this model
+-- in addition to previous model
+1. Input(from System2) --decode-> current_System2_State,
+   next_System1_State --encode-> Output(to System2)
+2. Input(from System1) --decode-> next_System1_State,
+   next_System1_State --encode-> Output(to System1)
+```
+
+decoder example
+- [3D-R2N2: 3D Recurrent Reconstruction Neural Network - Stanford](http://3d-r2n2.stanford.edu/)
+reconstruct the 3d model of the object given its 2d observations (image)
+- [Neural scene representation and rendering -- Deepmind](https://deepmind.com/blog/neural-scene-representation-and-rendering/)
+
+
+time-series prediction only has observation of the Output sequences
+thus, it's a degenerated scenario like a monologue
+(the system still could have model of the rest of the world but trivial because it's not expecting any feedback.
+the update of the understanding of the external world is limited to "the external world received all my words up to this point")
+
+to learn the mealy machine behind a event-driven system,
+- need to observe the Input sequence as well
+- or use generative model with "reasonable" assumptions
+
 # Reference
 
 ## Factorial Hidden Markov Model
