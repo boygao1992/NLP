@@ -90,6 +90,9 @@ thus, it's a degenerated scenario like a monologue
 (the system still could have model of the rest of the world but trivial because it's not expecting any feedback.
 the update of the understanding of the external world is limited to "the external world received all my words up to this point")
 
+because we cannot observe the initial (hidden) state, we need to have a dedicated `Start` state to solve this problem (degenerate transition/conditional probability to standalone state probability)
+like the handling in HMM
+
 to learn the mealy machine behind a event-driven system,
 - need to observe the Input sequence as well
 - or use generative model with "reasonable" assumptions
@@ -101,3 +104,21 @@ to learn the mealy machine behind a event-driven system,
 ### 1.[Factorial Hidden Markov Models - Columbia EE](http://www.ee.columbia.edu/~sfchang/course/svia-F03/papers/factorial-HMM-97.pdf)
 
 ### 2.[Supertagging with Factorial Hidden Markov Models](http://www.aclweb.org/anthology/Y09-2043)
+
+## Grammar vs Semantics
+
+### 1.[What's the difference between syntax and grammar?](https://linguistics.stackexchange.com/questions/3484/whats-the-difference-between-syntax-and-grammar)
+
+> Grammar is a (occasionally the) set of rules for the organization of meaningful elements into sentences; their economy, in one sense of that word.
+>
+> There are two basic varieties of grammar; all languages have some of both kinds, but, depending on the kind of language involved, there's a lot of variation in how much of each kind they have.
+>
+> - One part of grammar is called Morphology. It has to do with the **internal** economy of words. So a word like bookkeepers has four morphemes (book, keep, -er, -s) and is put together with morphology. English doesn't have nearly as much morphology as most European languages; Russian grammar, for instance, has much more morphology than syntax. Russian is a synthetic (inflected) language.
+
+local morphological decoration on word
+
+> - The other part is called Syntax. It has to do with the **external** economy of words, including word order, agreement; like the sentence For me to call her sister would be a bad idea and its syntactic transform It would be a bad idea for me to call her sister. That's syntax. English grammar is mostly syntax. English is an analytic (uninflected) language.
+
+composition of words
+
+abstract away the functionality of decoration as separate word or word combination
