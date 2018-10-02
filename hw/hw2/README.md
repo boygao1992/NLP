@@ -74,7 +74,7 @@ You do not have to deal with the case in which  terminals and non-terminals are 
 
 Consider the following dependency graph. 
 
-**![he sent her a funny meme today](https://courseworks2.columbia.edu/courses/55831/files/2519612/download?wrap=1)**
+**![he sent her a funny meme today](./materials/he_sent_her_a_funny_meme_today.png)**
 
 Write down the sequence of transitions that an arc-standard  dependency parser would have to take to generate this dependency tree  from the initial state 
 
@@ -120,7 +120,7 @@ Take a look at these files and make sure you understand the  format. The tree st
 (TOP (S (NP i) (VP (WOULD would) (VP (LIKE like) (VP (TO to) (VP (TRAVEL travel) (PP (TO to) (NP westchester))))))) (PUN .))
 ```
 
-*![i would like to travel to westchester .](https://courseworks2.columbia.edu/courses/55831/files/2517184/download?wrap=1)*
+**![i would like to travel to westchester .](./materials/i_would_like_to_travel_to_westchester.png)**
 
 Note that there are no part of speech tags. In some cases phrases  like NP directly project to the terminal symbol (NP -> westchester).  In other cases, nonterminals for a specific word were added (TRAVEL  -> travel).
 The start-symbol for the grammar (and therefore the  root for all trees) is "TOP". This is the result of an automatic  conversion to make the tree structure compatible with the grammar in  Chomsky Normal Form. 

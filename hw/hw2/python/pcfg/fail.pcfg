@@ -1,0 +1,23 @@
+# Startsymbols
+S ; 1.0
+
+# Phrasal rules
+S -> NP VP ; 1.0
+
+NP -> ADJ NP ; 0.3
+NP -> PRP ; 0.1
+NP -> N ; 0.6
+
+VP -> V NP ; 0.8
+VP -> AUX V NP ; 0.2
+
+PRP -> they ; 1.0
+
+N -> potatoes ; 1.0
+
+ADJ -> baking ; 1.0
+
+V -> baking ; 0.5
+V -> are ; 0.5
+
+AUX -> are ; 1.0

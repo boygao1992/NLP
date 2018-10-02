@@ -13,6 +13,9 @@ def isNonTerminal(symbol):
     return symbol.isupper() # 'COST'.isupper() => True
 def isTerminal(symbol):
     return not symbol.isupper()
+# special cases not covered by 'islower()' :
+# - ('WHNP', ('0',))
+# - ('PUN',  ('.',))
 
 class Pcfg(object):
     """
@@ -99,6 +102,7 @@ class Pcfg(object):
                 if ( len( rhs ) == 2 ) and ( ( not isNonTerminal( rhs[0] ) ) or ( not isNonTerminal( rhs[1] ) ) ):
                     result = False
                     print( rule[:2], " : 2.1 a Tuple of 2 non-terminals")
+
                 if ( len( rhs ) == 1 ) and ( not isTerminal( rhs[0] ) ):
                     result = False
                     print( rule[:2], " : 2.2 a Tuple of 1 terminal")
@@ -130,7 +134,7 @@ class Pcfg(object):
             # WHNP  :  1.0000000000003
             # X  :  0.9999999999989999
             # INTJ  :  0.9999999999999
-            if ( abs( prob - 1.0 ) > 1e-6 ):
+            if ( abs( prob - 1.0 ) > 1e-10 ):
                 result = False
 
         return result
@@ -139,3 +143,7 @@ class Pcfg(object):
 if __name__ == "__main__":
     with open(sys.argv[1],'r') as grammar_file:
         grammar = Pcfg(grammar_file)
+        if grammar.verify_grammar():
+            print("verify_grammar: succeeded")
+        else:
+            print("verify_grammar: failed")
