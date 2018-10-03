@@ -86,6 +86,8 @@ def check_probs_format(table):
 
 def initBackpointer():
     return defaultdict()
+def initProb():
+    return defaultdict(int)
 
 class CkyParser(object):
     """
@@ -105,7 +107,8 @@ class CkyParser(object):
         return False
         """
         # TODO, part 2
-        return False
+        table, probs = self.parse_with_backpointers(tokens)
+        return probs[(0,len(tokens))][self.grammar.startsymbol] != 0
 
     def parse_with_backpointers(self, tokens):
         """
@@ -113,14 +116,17 @@ class CkyParser(object):
         """
         # TODO, part 3
         table = defaultdict(initBackpointer)
-        probs = None
+        probs = defaultdict(initProb)
         n = len(tokens)
         for i in range(0, n):
             token = tokens[i]
             for rule in self.grammar.rhs_to_rules[(token,)]:
+                # rule = ('WITH', ('with',), 1.0)
                 lhs_np = rule[0]
+                prob = rule[2]
                 window = (i,i+1)
                 table[window][lhs_np] = token
+                probs[window][lhs_np] = math.log(prob)
 
         for l in range(2, n+1):
             for i in range(0, n-l+1):
@@ -131,18 +137,27 @@ class CkyParser(object):
                         for right_np in table[right_window]:
                             for rule in self.grammar.rhs_to_rules[(left_np, right_np)]:
                                 lhs_np = rule[0]
+                                prob = math.log(rule[2]) + probs[left_window][left_np] + probs[right_window][right_np]
                                 window = (i, i+l)
-                                table[window][lhs_np] = ( (left_np, i, k), (right_np, k, i+l) )
+                                if (probs[window][lhs_np] == 0)or((probs[window][lhs_np] != 0)and(probs[window][lhs_np] < prob)):
+                                    table[window][lhs_np] = ( (left_np, i, k), (right_np, k, i+l) )
+                                    probs[window][lhs_np] = prob
 
         return table, probs
 
 
-def get_tree(chart, i,j,nt):
+def get_tree(table, i, j, nt):
     """
     Return the parse-tree rooted in non-terminal nt and covering span i,j.
     """
     # TODO: Part 4
-    return None
+    bps = table[(i,j)][nt]
+    if j - i == 1: # Leaf nodes may be strings
+        return (nt, bps)
+    else:
+        lbp = bps[0]
+        rbp = bps[1]
+        return (nt, get_tree(table, lbp[1], lbp[2], lbp[0]), get_tree(table, rbp[1], rbp[2], rbp[0]))
 
 
 if __name__ == "__main__":
@@ -151,7 +166,8 @@ if __name__ == "__main__":
         grammar = Pcfg(grammar_file)
         parser = CkyParser(grammar)
         toks =['flights', 'from','miami', 'to', 'cleveland','.']
-        #print(parser.is_in_language(toks))
-        #table,probs = parser.parse_with_backpointers(toks)
-        #assert check_table_format(chart)
-        #assert check_probs_format(probs)
+        print(parser.is_in_language(toks))
+        table,probs = parser.parse_with_backpointers(toks)
+        assert check_table_format(table)
+        assert check_probs_format(probs)
+        print (get_tree(table, 0, len(toks), grammar.startsymbol))
