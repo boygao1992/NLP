@@ -15,9 +15,9 @@
 
 \usetikzlibrary{fit,positioning,arrows,automata,calc}
 \tikzset{
-  main/.style={circle, minimum size = 18mm, thick, draw =black!80, node distance = 10mm},
+  main/.style={circle, minimum size = 15mm, thick, draw =black!80, node distance = 10mm},
   connect/.style={-latex, thick},
-  box/.style={rectangle, draw=black!100}
+  box/.style={rectangle, minimum height = 8mm,draw=black!100}
 }
 
 % environments: theorem[*rename], proof[*rename], 
@@ -149,18 +149,21 @@ more structure, but it will also generate POS tags and words).
 \subsection*{(b)}
 
 \begin{solution}
+  \
+
   \begin{tikzpicture}
     \node[box,draw=white!100] (Latent) {\textbf{Tag}};
     \node[main] (Start) [right=of Latent] {$Start$};
     \node[main] (L1) [right=of Start] {$PRP$};
     \node[main] (L2) [right=of L1] {$Aux$};
     \node[main] (L3) [right=of L2] {$V$};
-    \node[main] (Lt) [right=of L3] {$NP$};
-    \node[main,fill=black!10] (O1) [below=of L1] {$they$};
-    \node[main,fill=black!10] (O2) [below=of L2] {$are$};
-    \node[main,fill=black!10] (O3) [below=of L3] {$baking$};
-    \node[main,fill=black!10] (Ot) [below=of Lt] {$potatoes$};
+    \node[main] (Lt) [right=of L3] {$N$};
+    \node[box,fill=black!10] (O1) [below=of L1] {$they$};
+    \node[box,fill=black!10] (O2) [below=of L2] {$are$};
+    \node[box,fill=black!10] (O3) [below=of L3] {$baking$};
+    \node[box,fill=black!10] (Ot) [below=of Lt] {$potatoes$};
     \node[box,draw=white!100,below=of Latent] (Observed) {\textbf{Word}};
+
     \path (Start) edge [connect] (L1)
           (L1) edge [connect] (L2)
           (L2) edge [connect] (L3)
@@ -170,12 +173,126 @@ more structure, but it will also generate POS tags and words).
           (L3) edge [connect] (O3)
           (Lt) edge [connect] (Ot);
 
-    % draw the dashed line
     \draw [dashed, shorten >=-1cm, shorten <=-1cm]
         ($(Latent)!0.7!(Observed)$) coordinate (a) -- ($(Lt)!(a)!(Ot)$);
   \end{tikzpicture}
+
+  \[
+    \begin{aligned}
+        &P[tags = \{PRP, Aux, V, N\}, words = \{they, are, baking, potatoes\}]\\
+      = &P[tag = PRP | tag = Start] \cdot P[word = they | tag = PRP]\\
+      \cdot &P[tag = Aux | tag = PRP] \cdot P[word = are | tag = Aux]\\
+      \cdot &P[tag = V | tag = Aux] \cdot P[word = baking | tag = V]\\
+      \cdot &P[tag = N | tag = V] \cdot P[word = potatoes | tag = N]\\
+      = &0.006
+    \end{aligned}
+  \]
+
+  \begin{tikzpicture}
+    \node[box,draw=white!100] (Latent) {\textbf{Tag}};
+    \node[main] (Start) [right=of Latent] {$Start$};
+    \node[main] (L1) [right=of Start] {$PRP$};
+    \node[main] (L2) [right=of L1] {$V$};
+    \node[main] (L3) [right=of L2] {$Adj$};
+    \node[main] (Lt) [right=of L3] {$N$};
+    \node[box,fill=black!10] (O1) [below=of L1] {$they$};
+    \node[box,fill=black!10] (O2) [below=of L2] {$are$};
+    \node[box,fill=black!10] (O3) [below=of L3] {$baking$};
+    \node[box,fill=black!10] (Ot) [below=of Lt] {$potatoes$};
+    \node[box,draw=white!100,below=of Latent] (Observed) {\textbf{Word}};
+
+    \path (Start) edge [connect] (L1)
+          (L1) edge [connect] (L2)
+          (L2) edge [connect] (L3)
+          (L3) edge [connect] (Lt);
+    \path (L1) edge [connect] (O1)
+          (L2) edge [connect] (O2)
+          (L3) edge [connect] (O3)
+          (Lt) edge [connect] (Ot);
+
+    \draw [dashed, shorten >=-1cm, shorten <=-1cm]
+        ($(Latent)!0.7!(Observed)$) coordinate (a) -- ($(Lt)!(a)!(Ot)$);
+  \end{tikzpicture}
+  \[
+    \begin{aligned}
+        &P[tags = \{PRP, V, Adj, N\}, words = \{they, are, baking, potatoes\}]\\
+      = &P[tag = PRP | tag = Start] \cdot P[word = they | tag = PRP]\\
+      \cdot &P[tag = V | tag = PRP] \cdot P[word = are | tag = V]\\
+      \cdot &P[tag = Adj | tag = V] \cdot P[word = baking | tag = Adj]\\
+      \cdot &P[tag = N | tag = Adj] \cdot P[word = potatoes | tag = N]\\
+      = &0.0072
+    \end{aligned}
+  \]
+
+  Here is my HMM:
+  \begin{enumerate}
+  \item tag-word transition distributions (the same as in PCFG):
+    \begin{itemize}
+    \item $P[word = they | tag = PRP] = 1$
+    \item $P[word = are | tag = Aux] = 1$
+    \item $P[word = baking | tag = V] = 0.5$, $P[word = are | tag = V] = 0.5$
+    \item $P[word = potatoes | tag = N] = 1$
+    \end{itemize}
+  \item tag-tag transition distributions:
+    \begin{itemize}
+    \item $P[tag = PRP | tag = Start] = 1$
+    \item $P[tag = Aux | tag = PRP] = 0.5$, $P[tag = V | tag = PRP] = 0.5$
+    \item $P[tag = N | tag = V] = 0.5$, $P[tag = Adj | tag = V] = 0.5$
+    \item $P[tag = V | tag = Aux] = 0.048$, $P[tag = PRP | tag = Aux] = 0.952$
+    \item $P[tag = N | tag = Adj] = 0.0576$
+    \item $P[tag = PRP | tag = N] = 1$
+    \end{itemize}
+  \end{enumerate}
+
+\end{solution}
+
+\subsection*{(c)}
+\begin{prob}
+  In general, is it possible to translate any PCFG into an HMM that produces the
+  identical \textit{joint} probability P(tags, words) as PCFG (i.e. not just for
+  a single sentence)? Explain how or why not. No formal proof is necessary.
+  Hint: This has nothing to do with probabilities, but with language classes.
+\end{prob}
+\begin{solution}
+  The hidden/latent state space in HMM can be formally described
+  by a finite state machine which is strictly less expressive than pushdown
+  automaton / context-free grammar in PCFG.
 \end{solution}
 
 \section*{Problem 2}
+
+Consider the following probabilistic context free grammar.
+
+\[
+  \begin{aligned}
+    S &\rightarrow NP\ VP &[1.0]\\
+    NP &\rightarrow Adj\ NP &[0.3]\\
+    NP &\rightarrow PRP &[0.1]\\
+    NP &\rightarrow N &[0.6]\\
+    VP &\rightarrow V\ NP &[0.8]\\
+    VP &\rightarrow Aux\ V\ NP &[0.2]\\
+    PRP &\rightarrow they &[1.0]\\
+    N &\rightarrow potatoes &[1.0]\\
+    Adj &\rightarrow baking &[1.0]\\
+    V &\rightarrow baking &[0.5]\\
+    V &\rightarrow are &[0.5]\\
+    Aux &\rightarrow are &[1.0]\\
+  \end{aligned}
+\]
+
+\subsection*{(a)}
+\begin{prob}
+  Using this grammar, show how the \textbf{Earley algorithm} would parse the
+  following sentence.
+
+  \textit{they are baking potatoes}
+
+  Write down the complete parse chart.
+  The chart should contain $n + 1$ entries where $n$ is the length of the
+  sentence.
+  Each entry $i$ should contain \textit{all} parser items generated by the
+  parser that end in position $i$.
+  You can ignore the probability for part (a).
+\end{prob}
 
 \end{document} 
