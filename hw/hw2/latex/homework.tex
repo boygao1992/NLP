@@ -547,4 +547,69 @@ Consider the following probabilistic context free grammar.
   Hint: Think about adding new non-terminal symbols.
 \end{prob}
 
+\begin{solution}
+  \
+
+  New grammar:
+  \[
+    \begin{aligned}
+      \text{S} &\rightarrow \text{NP VP} &[0.3]\\
+      \text{S} &\rightarrow \text{PRP VP} &[0.1]\\
+      \text{S} &\rightarrow \text{N VP} &[0.6]\\
+      \hline
+      \text{NP} &\rightarrow \text{Adj NP} &[0.3]\\
+      \text{NP} &\rightarrow \text{Adj PRP} &[0.1]\\
+      \text{NP} &\rightarrow \text{Adj N} &[0.6]\\
+      \hline
+      \text{VP} &\rightarrow \text{V NP} &[0.24]\\
+      \text{VP} &\rightarrow \text{V PRP} &[0.08]\\
+      \text{VP} &\rightarrow \text{V N} &[0.48]\\
+      \text{VP} &\rightarrow \text{AV NP} &[0.06]\\
+      \text{VP} &\rightarrow \text{AV PRP} &[0.02]\\
+      \text{VP} &\rightarrow \text{AV N} &[0.12]\\
+      \hline
+      \text{AV} &\rightarrow \text{Aux V} &[1.0]\\
+    \end{aligned}
+  \]
+
+  General rules:
+  \begin{enumerate}
+  \item for A $\rightarrow$ B
+    \begin{itemize}
+    \item find all rules with A on the right-hand side, e.g. C $\rightarrow$ A D
+    \item for each of them, substitute A on the right-hand side by B,
+      i.e. C $\rightarrow$ B D
+    \item add the modified rules to the rule set, and remove the original rule
+    \end{itemize}
+  \item for A $\rightarrow$ B C D E
+    \begin{itemize}
+    \item add non-terminals \{ F, G \}
+    \item add rules:
+      \begin{enumerate}
+      \item A $\rightarrow$ B F
+      \item F $\rightarrow$ C G
+      \item G $\rightarrow$ D E
+      \end{enumerate}
+    \item remove the original rule
+    \end{itemize}
+  \end{enumerate}
+\end{solution}
+
+\subsection*{(b)}
+\begin{prob}
+  Using your grammar, fill the CKY parse chart as shown in class and show all
+  parse trees.
+\end{prob}
+
+\begin{solution}
+  See Figure \ref{fig:03}.
+  \begin{figure}
+  	\centering
+  	\includegraphics[width=0.7\linewidth]{../03-2}
+  	\caption{problem 3 (b)}
+  	\label{fig:03}
+  \end{figure}
+  
+\end{solution}
+
 \end{document} 
