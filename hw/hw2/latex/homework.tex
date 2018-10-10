@@ -602,14 +602,89 @@ Consider the following probabilistic context free grammar.
 \end{prob}
 
 \begin{solution}
-  See Figure \ref{fig:03}.
-  \begin{figure}
+  See Figure \ref{fig:01}.
+  \begin{figure}[h]
   	\centering
   	\includegraphics[width=0.7\linewidth]{../03-2}
   	\caption{problem 3 (b)}
-  	\label{fig:03}
+  	\label{fig:01}
   \end{figure}
   
 \end{solution}
+
+\section*{Problem 4 - Transition Based Dependency Parsing}
+\begin{prob}
+  Consider the following dependency graph.
+    \begin{figure}[h]
+      \centering
+      \includegraphics[width=0.7\linewidth]{../materials/he_sent_her_a_funny_meme_today}
+      \label{fig:02}
+    \end{figure}
+  Write down the sequence of transitions that an arc-standard dependency parser
+  would have to take to generate this dependency tree from the initial state.
+
+  ([\textbf{root}]$\sigma$, [he, sent, her, a, funny, meme, today]$\beta$, \{\}A)
+
+  Also write down the state resulting from each transition.
+\end{prob}
+
+\begin{solution}
+  \ \\
+  s0: [root], [he, send, her, a, funny, meme, today], []\\
+  $>$ shift\\
+  s1: [root, he], [send, her, a, funny, meme, today], []\\
+  $>$ Left-Arc$_{\text{nsubj}}$\\
+  s2: [root], [send, her, a, funny, meme, today], [(send, nsubj, he)]\\
+  $>$ shift\\
+  s3: [root, send], [her, a, funny, meme, today], [...]\\
+  $>$ shift\\
+  s4: [root, send, her], [a, funny, meme, today], [...]\\
+  $>$ shift\\
+  s5: [root, send, her, a], [funny, meme, today], [...]\\
+  $>$ shift\\
+  s6: [root, send, her, a, funny], [meme, today], [...]\\
+  $>$ Left-Arc$_{\text{amod}}$\\
+  s7: [root, send, her, a], [meme, today], [..., (meme, amod, funny)]\\
+  $>$ Left-Arc$_{\text{det}}$\\
+  s8: [root, send, her], [meme, today], [..., (meme, det, a)]\\
+  
+  % $>$ Right-Arc\\
+  % s9: [root, send], [meme, today], [..., (send, jobj, her)]\\
+  % $>$ shift\\
+  % s10: [root, send, meme], [today], [...]\\
+  % $>$ Right-Arc\\
+  % s11: [root, send], [today], [..., (send, dobj, meme)]\\
+  % $>$ shift\\
+  % s12: [root, send, today], [], [...]\\
+  % $>$ Right-Arc\\
+  % s13: [root, send], [], [..., (send, advmod, today)]\\
+  % $>$ Right-Arc\\
+  % s14: [root], [], [..., (root, pred, send)]\\
+
+  % $>$ shift\\
+  % s9: [root, send, her, meme], [today], [...]\\
+  % $>$ shift\\
+  % s10: [root, send,her, meme, today], [], [...]\\
+  % $>$ swap\\
+  % s11: [], [today, meme, her, send, root], [...]\\
+  % $>$ shift\\
+  % s12: [today], [meme, her, send, root], [...]\\
+  % $>$ shift\\
+  % s13: [today, meme], [her, send, root], [...]\\
+  % $>$ shift\\
+  % s14: [today, meme, her], [send, root], [...]\\
+  % $>$ Right-Arc\\
+  % s15: [today, meme], [send, root], [..., (send, jobj, her)]\\
+  % $>$ Right-Arc\\
+  % s16: [today], [send, root], [..., (send, dobj, meme)]\\
+  % $>$ Right-Arc\\
+  % s17: [], [send, root], [..., (send, advmod, today)]\\
+  % $>$ shift\\
+  % s18: [send], [root], [...]\\
+  % $>$ Right-Arc\\
+  % s19: [], [root], [..., (root, pred, send)]\\
+  
+\end{solution}
+
 
 \end{document} 
