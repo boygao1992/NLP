@@ -4,6 +4,7 @@ import copy
 import sys
 import keras
 import numpy as np
+from keras.utils.np_utils import to_categorical
 
 class State(object):
     def __init__(self, sentence = []):
@@ -87,18 +88,25 @@ def get_training_instances(dep_structure):
     return seq
 
 
+# (shift, None)
+# (left_arc, <dep_relations>)
+# (right_arc, <dep_relations>)
+
 dep_relations = ['tmod', 'vmod', 'csubjpass', 'rcmod', 'ccomp', 'poss', 'parataxis', 'appos', 'dep', 'iobj', 'pobj', 'mwe', 'quantmod', 'acomp', 'number', 'csubj', 'root', 'auxpass', 'prep', 'mark', 'expl', 'cc', 'npadvmod', 'prt', 'nsubj', 'advmod', 'conj', 'advcl', 'punct', 'aux', 'pcomp', 'discourse', 'nsubjpass', 'predet', 'cop', 'possessive', 'nn', 'xcomp', 'preconj', 'num', 'amod', 'dobj', 'neg','dt','det']
 
+dep_dict = {k: v for v, k in enumerate(dep_relations)}
+NUM_DEP = len(dep_dict)
+NUM_CLASSES = NUM_DEP * 2 + 1;
 
 NULL = "<NULL>"
 
-def translate(word_vocab, word, pos):
+def translate_input(word_vocab, word, pos):
     # special treatment in `get_input_representation`
     if pos == NULL:
         return word_vocab[NULL]
 
     if word == None:
-        return word_vocab["<Root>"]
+        return word_vocab["<ROOT>"]
 
     if pos == "CD":
         return word_vocab["<CD>"]
@@ -111,6 +119,16 @@ def translate(word_vocab, word, pos):
 
     return word_vocab["<UNK>"]
 
+# translate_output :: Tuple String String -> Bounded_Int[0, 90]
+def translate_output(output_pair):
+    (operator, tag) = output_pair
+    if operator == "left_arc":
+        return dep_dict[tag]
+    if operator == "right_arc":
+        return dep_dict[tag] + NUM_DEP
+    if operator == "shift":
+        return NUM_DEP * 2;
+    return None
 
 class FeatureExtractor(object):
 
@@ -200,23 +218,25 @@ class FeatureExtractor(object):
                 idx = state_stack[i]
                 stack_word = words[ idx ]
                 stack_pos = pos[ idx ]
-                stack_rep.append(translate(self.word_vocab, stack_word, stack_pos))
+                stack_rep.append(translate_input(self.word_vocab, stack_word, stack_pos))
             else:
-                stack_rep.append(translate(self.word_vocab, "whatever", NULL))
+                stack_rep.append(translate_input(self.word_vocab, "whatever", NULL))
 
             if i < len(state_buffer):
                 idx = state_buffer[i]
                 buffer_word = words[ idx ]
                 buffer_pos = pos[ idx ]
-                buffer_rep.append(translate(self.word_vocab, buffer_word, buffer_pos))
+                buffer_rep.append(translate_input(self.word_vocab, buffer_word, buffer_pos))
             else:
-                buffer_rep.append(translate(self.word_vocab, "whatever", NULL))
+                buffer_rep.append(translate_input(self.word_vocab, "whatever", NULL))
+        return np.concatenate([stack_rep, buffer_rep])
 
-        return np.concatenate(stack_rep, buffer_rep)
-
+# self.output_labels = {('shift', None): 0, ('left_arc', 'tmod'): 1, ('right_arc', 'tmod'): 2, ('left_arc', 'vmod'): 3, ... }
     def get_output_representation(self, output_pair):
         # TODO: Write this method for Part 2
-        return np.zeros(91)
+        # ('shift', None)
+        # ('left_arc', 'tmod')
+        return to_categorical(translate_output(output_pair), NUM_CLASSES)
 
 
 

@@ -6,7 +6,37 @@ import sys
 import numpy as np
 import keras
 
-from extract_training_data import FeatureExtractor, State
+from extract_training_data import FeatureExtractor, State, dep_relations, NUM_DEP, NUM_CLASSES
+
+def isLegal(state):
+    def _isLegal(transition_index):
+        # illegal moves
+        # 1. `left_arc` and `right_arc` when stack is empty
+        if len(state.stack) == 0:
+            if transition_index < NUM_DEP * 2:
+                return False
+        # 2. `shift` when buffer is empty but stack is not empty
+        if (len(state.buffer) == 0) and (len(state.stack) > 0):
+            if transition_index == NUM_DEP * 2 + 1:
+                return False
+        # 3. `left_arc` when root node is on the top of the stack
+        if (len(state.stack) > 0) and (state.stack[-1] == 0):
+            if transition_index < NUM_DEP:
+                return False
+        return True
+    return _isLegal
+
+def contains(legal_moves):
+    def _contains(transition_index):
+        return transition_index in legal_moves
+    return _contains
+
+def toTransition(transition_index):
+    if transition_index < NUM_DEP:
+        return ("left_arc", dep_relations[transition_index])
+    if transition_index < NUM_DEP*2:
+        return ("right_arc", dep_relations[transition_index - NUM_DEP])
+    return ("shift", None)
 
 class Parser(object):
 
@@ -22,8 +52,22 @@ class Parser(object):
         state.stack.append(0)
 
         while state.buffer:
-            pass
             # TODO: Write the body of this loop for part 4
+
+            # TODO when the buffer is empty
+            input_rep = self.extractor.get_input_representation(words, pos, state)
+            output_rep = self.model.predict(np.array( [input_rep] ))
+            legal_moves = list(filter(isLegal(state), np.arange(NUM_CLASSES)))
+            sorted_transition_index = reversed(np.argsort(output_rep)[0])
+            legal_transition_index = list(filter(contains(legal_moves), sorted_transition_index))
+            transition_index = legal_transition_index[0]
+            (operator, label) = toTransition(transition_index)
+            if operator == "left_arc":
+                state.left_arc(label)
+            if operator == "right_arc":
+                state.right_arc(label)
+            if operator == "shift":
+                state.shift()
 
         result = DependencyStructure()
         for p,c,r in state.deps:
