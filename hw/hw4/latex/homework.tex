@@ -1,0 +1,66 @@
+\documentclass[twoside,11pt]{homework}
+
+\coursename{COMS W4705: Natural Language Processing (Fall 2018)} 
+
+\studname{Wenbo Gao}    % YOUR NAME GOES HERE
+\studmail{wg2313@columbia.edu}% YOUR UNI GOES HERE
+\hwNo{4}                   % THE HOMEWORK NUMBER GOES HERE
+\date{\today} % DATE GOES HERE
+
+% Uncomment the next line if you want to use \includegraphics.
+\usepackage{graphicx}
+%\includegraphics[height=0.3\textheight]{hw0.pdf}
+\usepackage{physics}
+% \usepackage{tikz-cd}
+
+% environments: theorem[*rename], proof[*rename], 
+
+\begin{document}
+\maketitle
+
+\section*{Problem 1}
+
+Using the raw co-occurence counts:
+\begin{itemize}
+\item Which word is the most similar to 'animal' using euclidean distance?
+
+  'dog'.
+  \[
+    \text{dis}(\text{dog}, \text{animal})
+    = \sqrt{(0-2)^2+(4-3)^2+(0-0)^2+(4-3)^2+(2-0)^2+(2-3)^2}
+    = \sqrt{11}
+  \]
+  \[
+    \text{dis}(\text{cat}, \text{animal})
+    = \sqrt{(4-2)^2+(0-3)^2+(0-0)^2+(3-3)^2+(3-0)^2+(10-3)^2}
+    = \sqrt{71}
+  \]
+  \[
+    \text{dis}(\text{computer}, \text{animal})
+    = \sqrt{(0-2)^2+(0-3)^2+(0-0)^2+(5-3)^2+(0-0)^2+(5-3)^2}
+    = \sqrt{21}
+  \]
+  \[
+    \text{dis}(\text{run}, \text{animal})
+    = \sqrt{(4-2)^2+(3-3)^2+(5-0)^2+(0-3)^2+(3-0)^2+(4-3)^2}
+    = 4 \sqrt{3}
+  \]
+  \[
+    \text{dis}(\text{mouse}, \text{animal})
+    = \sqrt{(2-2)^2+(10-3)^2+(5-0)^2+(4-3)^2+(3-0)^2+(0-3)^2}
+    = \sqrt{93}
+  \]
+\item Which word is the most similar to 'animal' using cosine similarity?
+  \[
+    \text{dis}(\text{dog}, \text{animal})
+    = \frac{\vec{v}_{dog} \cdot \vec{v}_{animal}}{||\vec{v}_{dog}|| \ ||\vec{v}_{animal}||}
+    = \frac{0*2 + 4*3 + 0*0 + 4*3 + 2*0 + 2*3}{ \sqrt{0^2+4^2+0^2+4^2+2^2+2^2} \sqrt{2^2+3^2+0^2+3^2+0^2+3^2}}
+  \]
+
+\end{itemize}
+
+\section*{Problem 2}
+
+\section*{Problem 3}
+
+\end{document} 

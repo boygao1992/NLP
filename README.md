@@ -97,6 +97,15 @@ to learn the mealy machine behind a event-driven system,
 - need to observe the Input sequence as well
 - or use generative model with "reasonable" assumptions
 
+## Translation
+
+- derivatives from one language ( one dominates another )
+- merge of cultures ( roughly balanced )
+
+refinement of word-to-word alignment
+- co-occurrence (word space)
+  - phrase space, syntax space, semantic space, introlingo space
+
 # Reference
 
 ## Factorial Hidden Markov Model
