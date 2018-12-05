@@ -11,6 +11,8 @@ import numpy as np
 from collections import defaultdict
 import string
 from functools import reduce
+import math
+import scipy.spatial.distance as distance
 
 # Participate in the 4705 lexical substitution competition (optional): NO
 # Alias: [please invent some name]
@@ -108,25 +110,76 @@ class Word2VecSubst(object):
     def __init__(self, filename):
         self.model = gensim.models.KeyedVectors.load_word2vec_format(filename, binary=True)
 
+# Total = 298, attempted = 298
+# precision = 0.053, recall = 0.053
+# Total with mode 206 attempted 206
+# precision = 0.063, recall = 0.063
     def predict_nearest(self,context):
         lemma = context.lemma
         pos = context.pos
         candidates = get_candidates(lemma, pos)
-        return None # replace for part 4
 
+        result = None
+        best_dis = math.inf
+        for candidate in candidates:
+            if candidate in self.model.wv:
+                dis = self.model.similarity(candidate, lemma)
+                if dis < best_dis:
+                    result = candidate
+                    best_dis = dis
+
+        return result # replace for part 4
+
+# Total = 298, attempted = 298
+# precision = 0.117, recall = 0.117
+# Total with mode 206 attempted 206
+# precision = 0.184, recall = 0.184
     def predict_nearest_with_context(self, context):
-        return None # replace for part 5
+        stop_words = set(stopwords.words('english'))
+        isNotStopWord = lambda word: not (word in stop_words) and not (word in string.punctuation)
+        deStopWord = lambda arr: list(filter(isNotStopWord, arr))
+        normalize = lambda arr: set(map(lambda s: s.lower(), arr))
+
+        left_context = deStopWord(context.left_context)
+        right_context = deStopWord(context.right_context)
+
+        left_boundary = 0
+        if (len(left_context) > 5):
+            left_boundary = len(left_context) - 5
+
+        context_wordbag = normalize(left_context[left_boundary:] + right_context[:5])
+
+        center = np.copy(self.model.wv[lemma])
+        for word in context_wordbag:
+            if word in self.model.wv:
+                center += self.model.wv[word]
+
+        lemma = space2underscore(context.lemma)
+        pos = context.pos
+        candidates = get_candidates(lemma, pos)
+
+        result = None
+        best_dis = math.inf
+        for candidate in candidates:
+            if candidate in self.model.wv:
+                dis = distance.cosine(center, self.model.wv[candidate])
+                if dis < best_dis:
+                    result = candidate
+                    best_dis = dis
+
+        return  result
 
 if __name__=="__main__":
 
     # At submission time, this program should run your best predictor (part 6).
 
     W2VMODEL_FILENAME = 'GoogleNews-vectors-negative300.bin.gz'
-    # predictor = Word2VecSubst(W2VMODEL_FILENAME)
+    predictor = Word2VecSubst(W2VMODEL_FILENAME)
 
     for context in read_lexsub_xml(sys.argv[1]):
         #print(context)  # useful for debugging
-        prediction = wn_frequency_predictor(context)
-        # prediction = predictor.predict_nearest(context)
+        # prediction = wn_frequency_predictor(context)
+        prediction = predictor.predict_nearest_with_context(context)
         print("{}.{} {} :: {}".format(context.lemma, context.pos, context.cid, prediction))
+
 
