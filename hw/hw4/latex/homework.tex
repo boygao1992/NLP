@@ -52,9 +52,53 @@ Using the raw co-occurence counts:
   \]
 \item Which word is the most similar to 'animal' using cosine similarity?
   \[
-    \text{dis}(\text{dog}, \text{animal})
-    = \frac{\vec{v}_{dog} \cdot \vec{v}_{animal}}{||\vec{v}_{dog}|| \ ||\vec{v}_{animal}||}
-    = \frac{0*2 + 4*3 + 0*0 + 4*3 + 2*0 + 2*3}{ \sqrt{0^2+4^2+0^2+4^2+2^2+2^2} \sqrt{2^2+3^2+0^2+3^2+0^2+3^2}}
+  \begin{aligned}
+  \text{dis}(\text{dog}, \text{animal})
+  &= \frac{\vec{v}_{dog} \cdot \vec{v}_{animal}}{||\vec{v}_{dog}|| \ ||\vec{v}_{animal}||}\\
+  &= \frac{0*2 + 4*3 + 0*0 + 4*3 + 2*0 + 2*3}{ \sqrt{0^2+4^2+0^2+4^2+2^2+2^2}
+    \sqrt{2^2+3^2+0^2+3^2+0^2+3^2}}\\
+  &= 0.851942751369
+  \end{aligned}
+  \]
+
+  \[
+  \begin{aligned}
+  \text{dis}(\text{cat}, \text{animal})
+  &= \frac{\vec{v}_{cat} \cdot \vec{v}_{animal}}{||\vec{v}_{cat}|| \ ||\vec{v}_{animal}||}\\
+  &= \frac{4*2 + 0*3 + 0*0 + 3*3 + 3*0 + 10*3}{ \sqrt{4^2+0^2+0^2+3^2+3^2+10^2}
+    \sqrt{2^2+3^2+0^2+3^2+0^2+3^2}}\\
+  &= 0.729230142593
+  \end{aligned}
+  \]
+
+  \[
+  \begin{aligned}
+  \text{dis}(\text{computer}, \text{animal})
+  &= \frac{\vec{v}_{computer} \cdot \vec{v}_{animal}}{||\vec{v}_{computer}|| \ ||\vec{v}_{animal}||}\\
+  &= \frac{0*2 + 0*3 + 0*0 + 5*3 + 0*0 + 5*3}{ \sqrt{0^2+0^2+0^2+5^2+0^2+5^2}
+    \sqrt{2^2+3^2+0^2+3^2+0^2+3^2}}\\
+  &= 0.762000762
+  \end{aligned}
+  \]
+
+  \[
+  \begin{aligned}
+  \text{dis}(\text{run}, \text{animal})
+  &= \frac{\vec{v}_{run} \cdot \vec{v}_{animal}}{||\vec{v}_{run}|| \ ||\vec{v}_{animal}||}\\
+  &= \frac{4*2 + 3*3 + 5*0 + 0*3 + 3*0 + 4*3}{ \sqrt{4^2+3^2+5^2+0^2+3^2+4^2}
+    \sqrt{2^2+3^2+0^2+3^2+0^2+3^2}}\\
+  &= 0.601431982944 
+  \end{aligned}
+  \]
+
+  \[
+  \begin{aligned}
+  \text{dis}(\text{mouse}, \text{animal})
+  &= \frac{\vec{v}_{mouse} \cdot \vec{v}_{animal}}{||\vec{v}_{mouse}|| \ ||\vec{v}_{animal}||}\\
+  &= \frac{2*2 + 10*3 + 5*0 + 4*3 + 3*0 + 0*3}{ \sqrt{2^2+10^2+5^2+4^2+3^2+0^2}
+    \sqrt{2^2+3^2+0^2+3^2+0^2+3^2}}\\
+  &= 0.665758353436 
+  \end{aligned}
   \]
 
 \end{itemize}
@@ -62,5 +106,20 @@ Using the raw co-occurence counts:
 \section*{Problem 2}
 
 \section*{Problem 3}
+\subsection*{a)}
+  \begin{figure}[h]
+  	\centering
+  	\includegraphics[width=0.7\linewidth]{../parse_tree}
+  	\caption{problem 3 (a)}
+  	\label{fig:01}
+  \end{figure}
+
+\subsection*{b)}
+  \begin{figure}[h]
+  	\centering
+  	\includegraphics[width=0.7\linewidth]{../disambiguation}
+  	\caption{problem 3 (b)}
+  	\label{fig:02}
+  \end{figure}
 
 \end{document} 
