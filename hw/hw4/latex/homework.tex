@@ -51,6 +51,8 @@ Using the raw co-occurence counts:
     = \sqrt{93}
   \]
 \item Which word is the most similar to 'animal' using cosine similarity?
+
+  'run'.
   \[
   \begin{aligned}
   \text{dis}(\text{dog}, \text{animal})
@@ -104,6 +106,12 @@ Using the raw co-occurence counts:
 \end{itemize}
 
 \section*{Problem 2}
+To determine if two senses of a lemma are homonyms or polysemy
+\begin{itemize}
+\item If there exists a subset of lemmas (with stop words removed) that coexists
+  in both synsets or hyponyms of both synsets, then they are homonyms;
+\item Otherwise, polysemy.
+\end{itemize}
 
 \section*{Problem 3}
 \subsection*{a)}
