@@ -19,7 +19,16 @@ While only the content in the uploaded lecture notes is expected for  the final,
   - 02-11
 - Parts of speech:
   - know the 9 traditional POS and some of the Penn Treebank tags
-    - 03-7, 03-11
+    - 04-7, 04-11
+    - noun (NN)
+    - pronoun (P)
+    - determiner (DT)
+    - **adjective (JJ)**
+    - verb (VB)
+    - **adverb (RB)**
+    - **preposition (IN)**
+    - conjunction (C)
+    - **interjection (UH)**
 - Types of Linguistic Theories (Prescriptive, Descriptive, Explanatory)
   - 05-6~7
 - Syntax:
@@ -230,11 +239,51 @@ While only the content in the uploaded lecture notes is expected for  the final,
 
 - Word senses, lexemes, homonymy, polysemy, metonymy, zeugma.
   - **important** 13-7~11, 15~18
+  - homonymy
+    - `Lexeme`s with the same `WordForm` but `Sense`s are remote (in some space of `Sense` or `Sentence`)
+  - polysemy
+    - `Lexeme`s with the same `WordForm` but `Sense`s are close
+  - metonomy
+  - zeugma
+    - heterogeneous `map`
+    - example: "Does United serve breakfast and JFK?"
+      - `serves := (S\NP)/NP : \x.\y. Serves(y,x)`
+        - `serves :: Any -> Any -> Boolean`
+      - `breakfast := NP : \x. Breakfast(x)`
+        - `Breakfast :: Any -> Boolean`
+        - embellish any entity, `x`, that fulfills `Breakfast` predicate/constraint a type `x :: Breakfast`
+      - `jfk := NP : \x. JFK(x)`
+        - `JFK :: Any -> Boolean`
+        - embellish any entity, `x`, that fulfills `JFK` predicate/constraint a type `x :: JFK`
+      - `and` is similar to product type `Tuple :: * -> * -> *`
+      - `(breakfast and JFK) :: Tuple Breakfast JFK`
+      - implicitly map `serve` over the `Tuple` (heterogeneous because two types under `Tuple` are different)
+      - `(serve breakfast and JFK) :: S\NP : \y. exists x1 :: Breakfast. exists x2 :: JFK. Serves(y, x1) ^ Serves(y, x2)`
+
+  
+
+```haskell
+type Word = String
+type Sentence = Array Word
+type WordForm = Word
+
+type Sense = Sentence -- we can further identify the Sense of each Word in a Sentence
+type Lexeme = (WordForm, Sense)
+```
+
 - WordNet, synsets
+  - It groups English words into sets of synonyms called synsets, provides short definitions and usage examples, and records a number of relations among these synonym sets or their members.
+  - All synsets are connected to other synsets by means of semantic relations. 
+    - Nouns
+      - hypernym, hyponym, meronym, holonym 
+    - Verbs
+      - hypernym (, troponym, entailment )
 - lexical relations (in WordNet)
   - synonym, antonym
   - hypernym, hyponym
-  - meronym
+    - is-a
+  - meronym, holonym
+    - part-of
 - Word-sense disambiguation:
   - Supervised learning approach and useful features.
   - Lesk algorithm (J&M 3rd ed. ch. 17.6)
