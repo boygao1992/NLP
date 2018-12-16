@@ -244,6 +244,22 @@ While only the content in the uploaded lecture notes is expected for  the final,
   - polysemy
     - `Lexeme`s with the same `WordForm` but `Sense`s are close
   - metonomy
+    - a subtype of polysemy (?)
+      - doesn't seem to have the constraint on `WordForm`
+    - containment (whole -> part)
+      - "the press" ~ reporters
+      - "the White House" ~ the U.S. presidential staff
+      - "the Pentagon" ~ the military leadership
+    - Synecdoche (part -> whole)
+      - "Franklin" ~ $100
+    - a physical item -> a related concept
+      - "the crown" ~ monarch
+      - "stomach" ~ appetite, hunger
+    - example 1: MEAT <-> ANIMAL
+      - "the chicken" was overcooked ~ chicken MEAT
+      - "the chicken" eats a worm ~ ANIMAL
+
+
   - zeugma
     - heterogeneous `map`
     - example: "Does United serve breakfast and JFK?"
@@ -251,14 +267,23 @@ While only the content in the uploaded lecture notes is expected for  the final,
         - `serves :: Any -> Any -> Boolean`
       - `breakfast := NP : \x. Breakfast(x)`
         - `Breakfast :: Any -> Boolean`
-        - embellish any entity, `x`, that fulfills `Breakfast` predicate/constraint a type `x :: Breakfast`
+        - embellish any entity, `x`, that fulfills `Breakfast` predicate/constraint a type `x :: Food`
       - `jfk := NP : \x. JFK(x)`
         - `JFK :: Any -> Boolean`
-        - embellish any entity, `x`, that fulfills `JFK` predicate/constraint a type `x :: JFK`
+        - embellish any entity, `x`, that fulfills `JFK` predicate/constraint a type `x :: Airport`
       - `and` is similar to product type `Tuple :: * -> * -> *`
       - `(breakfast and JFK) :: Tuple Breakfast JFK`
       - implicitly map `serve` over the `Tuple` (heterogeneous because two types under `Tuple` are different)
-      - `(serve breakfast and JFK) :: S\NP : \y. exists x1 :: Breakfast. exists x2 :: JFK. Serves(y, x1) ^ Serves(y, x2)`
+      - `(serve breakfast and JFK) :: S\NP : \y. exists x1 :: Food. exists x2 :: Airport. Serves(y, x1) ^ Serves(y, x2)`
+        - first `Serves :: Food -> Any -> Boolean`
+        - second `Serves :: Airport -> Any -> Boolean`
+  - Synonym
+    - close in `Sense` space
+    - without the extra constraint on `WordForm` in polysemy
+  - Antonyms
+    - opposite/remote in one feature/dimension
+  - is-a (related to entailment): Hyponymy / Hypernymy
+  - part-of: Meronymy / Holonymy
 
   
 
@@ -275,9 +300,11 @@ type Lexeme = (WordForm, Sense)
   - It groups English words into sets of synonyms called synsets, provides short definitions and usage examples, and records a number of relations among these synonym sets or their members.
   - All synsets are connected to other synsets by means of semantic relations. 
     - Nouns
-      - hypernym, hyponym, meronym, holonym 
+      - is-a: hypernym, hyponym
+      - part-of: meronym, holonym 
     - Verbs
-      - hypernym (, troponym, entailment )
+      - is-a: hypernym, hyponym
+      - ( troponym, entailment )
 - lexical relations (in WordNet)
   - synonym, antonym
   - hypernym, hyponym
@@ -286,19 +313,48 @@ type Lexeme = (WordForm, Sense)
     - part-of
 - Word-sense disambiguation:
   - Supervised learning approach and useful features.
-  - Lesk algorithm (J&M 3rd ed. ch. 17.6)
+    - bag-of-word features
+      - multi-hot encoding
+    - collocational features
+      - feature function:
+        - Input: a sentence and its corresponding POS tag sequence
+        - apply a fixed-length window filter on both
+        - zip
+    - concatenate/project word-embedding vectors into a phrase-embedding vector
+      - projection layer
+        - maps the discrete word indices of an n-gram context to a continuous vector space
+  - (dictionary-based) Lesk algorithm (J&M 3rd ed. ch. 17.6)
+    - simplified algorithm
+      - Given: `lemma :: Word`, `context :: Array Word`
+      - `lemma` -> `Set Sense`
+        - `gloss :: Set Word`, sentence description and examples of the given `lemma`
+        - `synset :: Set Word`, a set of synonyms surrounding a `Sense`
+      - count word overlap between `synset`/`gloss` of each `Sense` and `context`
+    - improvements
+      - include example sentences
+      - add glosses from related words
+        - hypernyms
+        - meronyms
+      - Word2Vec, word vector distance
+
   - Bootstrapping approach (*) (don't have to know the details, J&M 3rd ed. ch.  17.8).
 - Lexical substitution task
+  - need a (probabilistic) language model to evaluate the likelihood of a modified sentence still being "valid"
+    - faithfulness
+    - fluency
 
 **Distributional (Vector-based) Lexical Semantics** (J&M 3rd ed. ch 15 & 16, not in 2nd ed.)
 
 - Distributional hypothesis
+  - 12-09
 - Co-occurence matrix
 - Distance/Similarity metrics (euclidean distance, cosine similarity)
 - Dimensions (parameters)of Distributional Semantic Models
   - Preprocessing, term definition, context definition, feature  weighting, normalization, dimensionality reduction, similarity/distance  measure
 - Semantic similarity and relatedness (paradigmatic vs. syntagmatic relatedness)
+  - 12-20
   - Effect of context size on type of relatedness.
+    - (small -> large) ~ (syntagmatic-related -> paradigmatic-related)
 - Term weighting (*) (not discussed in detail):
   - TF*IDF
 - Sparse vs. Dense Vectors
