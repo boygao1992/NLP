@@ -508,15 +508,27 @@ type Lexeme = (WordForm, Sense)
 - Parallel Corpora
 
 - Noisy Channel Model for MT
+  - latent variables govern the (conditional) probability distribution of observable variables
 - Word alignments
 - IBM Model 2:
   - Alignment variables and model definition.
+    - two fixed-length sentences
+      - source `{e_1 ... e_l}`
+      - target `{f_1 ... f_m}`
+    - `i`th position in target `f` to `j` th position in source `e`
   - EM training for Model 2
     - **important**
 - Phrase-based MT (*)
 - MT Evaluation:
   - BLEU Score
     - **important**
+    - BP
+      - penalty on length if shorter than reference translation
+      - 1 if `c > r`
+      - `e^{1- r/c}` if `c <= r`
+        - `in (0, 1)`
+    - `(a1 x a2 x ... x an)^{1/n}`
+      - average performance on n-gram
 
 **Recurrent Neural Nets**
 
@@ -525,10 +537,20 @@ type Lexeme = (WordForm, Sense)
   - Basic RNN concept, hidden layer as state representation.
   - Common usage patterns:
     - Acceptor / Encoder
+      - the last output (`y5`) is the output of the network
+      - only compute loss for the final output and backprop to recompute weights
+        - weights for all RNN units are shared
     - Transducer
       - Transducer as generator
+        - offset by 1
+        - aggregate errors for prediction of each word in the sentence
       - Conditioned transduction (encoder-decoder)
+        - append additional context vector to each word (possibly a vector from some word embeddings)
+
   - Backpropagtion through time (BPTT) (*)
   - LSTMs (*)
 - Neural MT
   - Attention Mechanisms (*)
+    - 18-20~21
+    - assume the context upon a given word (`h_f3`)represent that word (`verde`)
+    - attention weight measures the correlation between contexts (`h_t` and `h_s`)
