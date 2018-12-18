@@ -362,27 +362,72 @@ type Lexeme = (WordForm, Sense)
 - Word Embeddings
 - Word2Vec embeddings using a neural network.
   - Skip-gram model
+    - Input: one-hot encoding of a single word
+    - Output: context (a fixed-length window around the word)
+      - for each position in the context, emit a probability distribution over all words
+    - Error:
   - CBOW (*)
 
 **Semantic Role Labeling** (J&M Ch. 22)
 
+- Event
+  - Frame in FrameNet
+  - Frameset in PropBank
+
+- Semantic Role
+  - Frame Element in FrameNet
+  - Numbered/Indexed Arguments in PropBank
+
 - Frame Semantics
   - Frame, Frame Elements (specific to each frame)
+    - Frame
+      - evoke a frame by presence of a word/pharse
+        - GIVING(frame) -> { donate, hand over, ... }
+    - Frame Element
+      - Core vs Non-core
+      - can be treated as a predicate
+        - \x. Doner(x)
+        - \x. Theme(x)
+        - \x. Receipient(x)
   - Valence Patterns
+    - assigning an additional grammatical role (GF) to each frame element (FE)
+      - Frame Element(FE)
+      - Grammatical Function(GF)
+      - Phrase Type(PT), composition of Part-of-speech (POS) tags on individual words
+        - NP -> subj, obj, obj2
+        - PPof (of NP) -> `dep-of`
+        - PPto (to NP) -> `dep-to`
   - FrameNet:
     - Frame definitions
     - Lexical Units
     - Example annotations to illustrate valence patterns.
+      - John(subj/DONOR) gave(V) Mary(obj/RECIPIENT) the book(obj2/THEME)
     - Frame-to-frame relations and frame-element relations (*) (you do not need to remember an exhaustive list of these relations).
       - 14-8
+      - inherits
+        - frame element to frame element mapping/alignment
+      - perspective on
+      - subframe of
   - PropBank:
     - Differences to FrameNet.
     - Semantic Roles (ARGx)
+      - Numbered/Indexed Arguments
+        - each index is bounded by a set of grammatical functions
+          - Proto-Agent (`Arg0`)
+          - Proto-Patient (`Arg1`)
+          - Arg2 ~ Arg5 are not strictly consistent leaving room for ambiguity
+            - parsing might not be unique and relies on additional parse rules
     - predicate-argument structure.
     - framesets
-  - Semantic Role Labeling:
+      - each corresponds a distinct sense of a lemma
+      - allow only a subset of Arguments present
+      - each predicate argument consists of an argument and a predicate
+        - Arg0 (indexed argument): causer of increase (predicate)
+  - Semantic Role Labeling / Frame Semantic Parsing:
     - Steps of the general syntax-based approach
       - Target identification, semantic role/frame element identification and labeling.
+      - Input: CFG parse tree of a raw sentence
+      - Output: Frame / Frameset
     - Features for semantic role role/FE identification and labeling. (*)  (you do not need to remember an exhaustive list, but have a general  sense of which features are important).
       - Selectional restrictions and preferences.
       - Parse-tree path features
@@ -409,6 +454,8 @@ type Lexeme = (WordForm, Sense)
 - ARG-of edges (inverse relations)
 - constants
 - relation to event logic (*)
+  - vertex with a variable name and -> (unary predicate) event
+  - directional edge-> (binary predicate) relation
 - AMR parsing (*)
   - JAMR approach (*)
   - Hyperedge Replacement Grammar (HRG) approach (*)
