@@ -450,16 +450,52 @@ type Lexeme = (WordForm, Sense)
 **Abstract Meaning Representation** (not in textbook, planned for 3rd edition)
 
 - meaning of vertices (entities) and edges (relations) (* you do not  have to remember specific special relations and concepts in the AMR  annotation guidelines).
+  - vertex
+    - a variable
+    - a predicate
+      - root and branch: frameset predicate
+      - leaf node: named entity predicate
+  - edge (from one vertex to one vertex, no hyperedge)
+    - a binary predicate with two variables from both vertices
+    - Indexed Arguments in Frameset from PropBank
+      - `:ARG0`, `:ARG1-of` (inverse), etc.
+    - constants
+      - `:quant`, `:polarity`
+    - non-core roles
+      - `:time`, `:location`, etc.
 - reentrancy
+  - inverse relations
+    - from
+      - (e/ eat-01 :ARG0 **(d / dog)** :ARG1 (b / bone))
+      - **(f/ find-01 :ARG0 d :ARG1 b)**
+    - to
+      - ... **(d / dog :ARG1-of (f / find-01 : ARG0 d))** ...
 - ARG-of edges (inverse relations)
+  - normalize a DAG into a tree
 - constants
+  - `:quant`, quantity
+  - `:polarity`
 - relation to event logic (*)
-  - vertex with a variable name and -> (unary predicate) event
-  - directional edge-> (binary predicate) relation
+  - 16-13
+    - PropBank
+      - want-01
+        - ARG0: prop-agent description
+        - ARG1: prop-patient description
+      - eat-01
+        - ...
+    - AMR
+      - (w / want-01 :ARG0 (d / dog) :ARG1(e / eat-01 :ARG0 d :ARG1 (b / bone )))
+    - Event Logic
+      - exists w, e, d, b.
+      - want-01(w)
+      - and ARG0(w, d) and ARG1(w, e)
+      - and eat-01(e)
+      - and ARG0(e, d) and ARG1(e, b)
+      - and dog(d)
+      - and bone(b)
 - AMR parsing (*)
   - JAMR approach (*)
   - Hyperedge Replacement Grammar (HRG) approach (*)
-  - **important** vs semantic role labeling
 
 **Machine Translation (MT****)** (J&M 2nd ed. Ch 25)
 
